@@ -1,7 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
+
+if TYPE_CHECKING:
+    from app.models.commodity import Commodity
+    from app.models.sector import Sector
 
 
 class PortType(Base):
@@ -28,9 +36,9 @@ class Port(Base):
     )
     cash: Mapped[int] = mapped_column(Integer, default=100000)
 
-    sector: Mapped["Sector"] = relationship("Sector", back_populates="port")
-    port_type: Mapped["PortType"] = relationship("PortType", lazy="noload")
-    stock: Mapped[list["PortStock"]] = relationship(
+    sector: Mapped[Sector] = relationship("Sector", back_populates="port")
+    port_type: Mapped[PortType] = relationship("PortType", lazy="noload")
+    stock: Mapped[list[PortStock]] = relationship(
         "PortStock", back_populates="port", lazy="noload"
     )
 
@@ -47,5 +55,5 @@ class PortStock(Base):
     max_quantity: Mapped[int] = mapped_column(Integer, default=1000)
     mode: Mapped[str] = mapped_column(String(4), nullable=False)
 
-    port: Mapped["Port"] = relationship("Port", back_populates="stock")
-    commodity: Mapped["Commodity"] = relationship("Commodity", lazy="noload")
+    port: Mapped[Port] = relationship("Port", back_populates="stock")
+    commodity: Mapped[Commodity] = relationship("Commodity", lazy="noload")

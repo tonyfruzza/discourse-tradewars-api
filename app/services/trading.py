@@ -5,7 +5,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.models.commodity import Commodity
 from app.models.player import Player
 from app.models.port import Port, PortStock
 from app.models.ship import Ship, ShipCargo

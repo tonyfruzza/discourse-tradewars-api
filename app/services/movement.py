@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models.player import Player
-from app.models.port import Port, PortType
+from app.models.port import Port
 from app.models.sector import Sector, SectorWarp
 
 

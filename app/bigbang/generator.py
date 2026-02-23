@@ -179,10 +179,10 @@ async def bigbang(db: AsyncSession, galaxy_size: int = 500, seed: int | None = N
     await seed_lookup_tables(db)
 
     # Phase 1: Create sectors
-    sectors = await create_sectors(db, galaxy_size, rng)
+    await create_sectors(db, galaxy_size, rng)
 
     # Phase 2+3: Wire warps
-    adj = await wire_warps(db, galaxy_size, rng)
+    await wire_warps(db, galaxy_size, rng)
 
     # Phase 4: Generate ports
     await generate_ports(db, galaxy_size, rng)

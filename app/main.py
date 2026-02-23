@@ -9,8 +9,9 @@ from app.routers import admin, health, player, port, sector, ship, tick
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run Alembic migrations on startup
-    from alembic import command
     from alembic.config import Config
+
+    from alembic import command
 
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")

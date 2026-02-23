@@ -1,7 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
+
+if TYPE_CHECKING:
+    from app.models.commodity import Commodity
+    from app.models.player import Player
 
 
 class ShipType(Base):
@@ -29,11 +37,11 @@ class Ship(Base):
     shields: Mapped[int] = mapped_column(Integer, default=0)
     hull: Mapped[int] = mapped_column(Integer, default=100)
 
-    ship_type: Mapped["ShipType"] = relationship("ShipType", lazy="noload")
-    cargo: Mapped[list["ShipCargo"]] = relationship(
+    ship_type: Mapped[ShipType] = relationship("ShipType", lazy="noload")
+    cargo: Mapped[list[ShipCargo]] = relationship(
         "ShipCargo", back_populates="ship", lazy="noload"
     )
-    owner: Mapped["Player"] = relationship("Player", back_populates="ship", uselist=False)
+    owner: Mapped[Player] = relationship("Player", back_populates="ship", uselist=False)
 
 
 class ShipCargo(Base):
@@ -46,5 +54,5 @@ class ShipCargo(Base):
     )
     quantity: Mapped[int] = mapped_column(Integer, default=0)
 
-    ship: Mapped["Ship"] = relationship("Ship", back_populates="cargo")
-    commodity: Mapped["Commodity"] = relationship("Commodity", lazy="noload")
+    ship: Mapped[Ship] = relationship("Ship", back_populates="cargo")
+    commodity: Mapped[Commodity] = relationship("Commodity", lazy="noload")

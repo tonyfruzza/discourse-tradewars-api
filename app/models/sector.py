@@ -1,7 +1,14 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Boolean, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
+
+if TYPE_CHECKING:
+    from app.models.port import Port
 
 
 class Sector(Base):
@@ -13,10 +20,10 @@ class Sector(Base):
     is_fedspace: Mapped[bool] = mapped_column(Boolean, default=False)
     nebula: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    port: Mapped["Port"] = relationship(
+    port: Mapped[Port] = relationship(
         "Port", back_populates="sector", uselist=False, lazy="noload"
     )
-    warps_out: Mapped[list["SectorWarp"]] = relationship(
+    warps_out: Mapped[list[SectorWarp]] = relationship(
         "SectorWarp", foreign_keys="SectorWarp.from_sector_id",
         back_populates="from_sector", lazy="noload"
     )
@@ -33,7 +40,7 @@ class SectorWarp(Base):
         Integer, ForeignKey("sectors.id"), index=True, nullable=False
     )
 
-    from_sector: Mapped["Sector"] = relationship(
+    from_sector: Mapped[Sector] = relationship(
         "Sector", foreign_keys=[from_sector_id], back_populates="warps_out"
     )
 

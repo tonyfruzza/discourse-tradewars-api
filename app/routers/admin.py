@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth import get_current_player, require_admin
+from app.auth import require_admin
 from app.bigbang.generator import bigbang
 from app.db import get_db
 from app.models.player import Player
