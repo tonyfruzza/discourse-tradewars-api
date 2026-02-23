@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: aktar/discourse-tradewars-api:latest
+          image: tonyfruzza/discourse-tradewars-api:latest
           ports:
             - containerPort: 8000
           envFrom:
