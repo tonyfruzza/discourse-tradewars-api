@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: discourse-tradewars-tick
+  namespace: discourse
+spec:
+  schedule: "0 0 * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: tick
+              image: curlimages/curl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  curl -sf -X POST \
+                    -H "X-Tick-Api-Key: $(TICK_API_KEY)" \
+                    http://discourse-tradewars-api:8000/api/tick
+              env:
+                - name: TICK_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: tradewars-secret
+                      key: TW_TICK_API_KEY
+          restartPolicy: OnFailure
