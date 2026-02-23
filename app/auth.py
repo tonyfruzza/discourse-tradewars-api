@@ -3,10 +3,13 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt import DecodeError, ExpiredSignatureError, decode
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.config import settings
 from app.db import get_db
 from app.models.player import Player
+from app.models.ship import Ship, ShipCargo
+from app.services.player_service import auto_enroll
 
 bearer_scheme = HTTPBearer()
 
@@ -26,25 +29,25 @@ async def get_current_player(
     discourse_user_id = payload.get("discourse_user_id")
     username = payload.get("username", "unknown")
     if discourse_user_id is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload"
+        )
 
     result = await db.execute(
-        select(Player).where(Player.discourse_user_id == discourse_user_id)
+        select(Player)
+        .where(Player.discourse_user_id == discourse_user_id)
+        .options(
+            selectinload(Player.ship)
+            .selectinload(Ship.ship_type),
+            selectinload(Player.ship)
+            .selectinload(Ship.cargo)
+            .selectinload(ShipCargo.commodity),
+        )
     )
     player = result.scalar_one_or_none()
 
     if player is None:
-        player = Player(
-            discourse_user_id=discourse_user_id,
-            username=username,
-            credits=20000,
-            sector_id=1,
-            alignment=0,
-            turns_remaining=settings.TURNS_PER_DAY,
-        )
-        db.add(player)
-        await db.commit()
-        await db.refresh(player)
+        player = await auto_enroll(db, discourse_user_id, username)
 
     return player
 

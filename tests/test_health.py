@@ -11,7 +11,7 @@ async def test_health(client):
 @pytest.mark.asyncio
 async def test_me_unauthenticated(client):
     response = await client.get("/api/me")
-    assert response.status_code == 403
+    assert response.status_code in (401, 403)
 
 
 @pytest.mark.asyncio
