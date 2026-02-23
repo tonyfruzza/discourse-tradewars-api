@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import admin, health, player, port, sector, ship
+from app.routers import admin, health, player, port, sector, ship, tick
 
 
 @asynccontextmanager
@@ -33,3 +33,4 @@ app.include_router(sector.router)
 app.include_router(port.router)
 app.include_router(ship.router)
 app.include_router(admin.router)
+app.include_router(tick.router)
